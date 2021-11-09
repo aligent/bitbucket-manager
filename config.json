@@ -1,0 +1,49 @@
+{
+     "credentials": {
+          "user": "",
+          "password": ""
+     },
+     "default_workspace": "",
+     "default_project": "",
+     "default_restricted_branches": ["production", "staging", "main"],
+     "default_branch_permissions": [
+          {"kind": "push"},
+          {"kind": "require_tasks_to_be_completed"},
+          {"kind": "require_no_changes_requested"},
+          {"kind": "require_passing_builds_to_merge", "value": 1},
+          {"kind": "require_approvals_to_merge", "value": 1},
+          {"kind": "reset_pullrequest_approvals_on_change"},
+          {"kind": "force"},
+          {"kind": "enforce_merge_checks"}
+     ],
+     "default_branching_model": {
+          "development": {
+               "use_mainbranch": true 
+          },
+          "production": {
+               "enabled": true,
+               "use_mainbranch": false,
+               "name": "production"
+          },
+          "branch_types": [
+               {
+                    "kind": "bugfix",
+                    "enabled": true,
+                    "prefix": "bugfix/"
+               },
+               {
+                    "kind": "feature",
+                    "enabled": true,
+                    "prefix": "feature/"
+               },
+               {
+                    "kind": "hotfix",
+                    "prefix": "hotfix/"
+               },
+               {
+                    "kind": "release",
+                    "prefix": "release/"
+               }
+          ]
+     }
+}
