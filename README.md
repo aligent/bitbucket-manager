@@ -12,7 +12,7 @@ The configuration for branching permissions are read from a configuration file.
 An example is available in `./config.json`
 
 Bitbucket attempts to read configuration in the following order:
--  `~/.config/bitbucket-manager.json`
+-  `~/.config/bitbucket-manager/config.json`
 -  `~/.bitbucket-manager.json`
 -  `./config.json`
 

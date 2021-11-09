@@ -7,7 +7,7 @@ from pathlib import Path
 
 CONFIG = {}
 DEFAULT_CONFIG_PATHS = [
-        f"{Path.home()}/.config/bitbucket-manager.json",
+        f"{Path.home()}/.config/bitbucket-manager/config.json",
         f"{Path.home()}/.bitbucket-manager.json",
         "config.json"]
 
