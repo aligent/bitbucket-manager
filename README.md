@@ -2,9 +2,15 @@
 A Python CLI tool for managing Bitbucket repositories. With the main focus of automating the creation of repositories with appropriate branching models and permissions.
 
 ## Usage
-To create a new repository run the following command:
+### Python
+After initialing the [Pipenv](https://pypi.org/project/pipenv/) environment. Run:
 ```
 python3 bootstrap.py create -r <REPO_NAME>
+```
+### Docker
+Docker can be used to run this tool without requiring python on the host. Run:
+```
+docker run -itv <PATH_TO_CONFIG_JSON>:/home/app/.bitbucket-manager.json  create -r <REPO_NAME>
 ```
 
 ## Configuration
