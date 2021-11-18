@@ -85,6 +85,34 @@ class Bitbucket:
             print("Failed to enable pipeline")
             print(r.text)
 
+
+
+    def get_uuid_for_environment(self, name, workspace, environment):
+        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/environments/"
+
+        r = requests.get(url=url, auth=self.auth)
+        for value in r.json()['values']:
+            if value['slug'] == environment:
+                return value['uuid']
+        if not r.ok:
+            print("Failed to fetch deployment environments")
+            print(r.text)
+
+
+    def set_deployment_environment_variable(self, name, workspace, uuid, key, value, is_secure):
+        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/deployments_config/environments/{uuid}/variables"
+
+        body = {
+                "key": key,
+                "value": value,
+                "secured": is_secure
+                }
+
+        r = requests.post(url=url, json=body, auth=self.auth)
+        if not r.ok:
+            print("Failed to set deployment environment variable")
+            print(r.text)
+
     def create_and_configure_repository(self, name, project = None, workspace = None):
         project = project if project is not None else self.config['default_project']
         workspace = workspace if workspace is not None else self.config['default_workspace']
