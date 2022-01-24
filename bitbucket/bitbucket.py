@@ -151,21 +151,3 @@ class Bitbucket:
         if not r.ok:
             print(f"Failed to create annotation {title}")
             print(r.text)
-
-    def create_and_configure_repository(self, name, project = None, workspace = None):
-        project = project if project is not None else self.config['default_project']
-        workspace = workspace if workspace is not None else self.config['default_workspace']
-        print(f"Creating new repository {workspace}/{name} in project {project}")
-
-        if self.get_repository(name, workspace).status_code != 404:
-            print(f"Rrepository {workspace}/{name} already exists.")
-            return
-
-        self.create_repository(name, project, workspace)
-        self.enable_pipelines(name, workspace)
-        self.create_empty_commit(name, workspace, 'main', 'Initial commit')
-        for branch in self.config['default_restricted_branches']:
-            self.create_branch(name, workspace, branch)
-            for permission in self.config['default_branch_permissions']:
-                self.set_repository_branch_permission(name, workspace, branch, permission)
-        self.set_repository_branch_model(name, workspace, self.config['default_branching_model'])
