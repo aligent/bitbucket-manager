@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 import argparse
 import os
 import json
-from bitbucket import Bitbucket 
+from bitbucket import Bitbucket
 from requests.auth import HTTPBasicAuth
 from pathlib import Path
 
