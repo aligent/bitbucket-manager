@@ -74,10 +74,11 @@ args = parser.parse_args()
 
 if args.cmd == "create-repository":
     print(f"Creating new repository {args.repository}")
-    bitbucket = Bitbucket(AUTH, CONFIG)
+    bitbucket = Bitbucket(auth=AUTH)
 
-    project = project if project is not None else CONFIG['default_project']
-    workspace = workspace if workspace is not None else CONFIG['default_workspace']
+    project = args.project
+    workspace = args.workspace
+    name = args.repository
 
     if bitbucket.get_repository(name, workspace).status_code != 404:
         print(f"Repository {workspace}/{name} already exists.")

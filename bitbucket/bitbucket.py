@@ -2,7 +2,7 @@ import requests
 
 class Bitbucket:
     auth = None
-    def __init__(self, auth, config, proxies):
+    def __init__(self, auth=None, config=None, proxies=None):
         self.auth = auth
         self.config = config
         self.proxies = proxies
