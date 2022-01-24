@@ -1,12 +1,12 @@
 # Bitbucket Manager 
 A Python CLI tool for managing Bitbucket repositories. With the main focus of automating the creation of repositories with appropriate branching models and permissions.
 
-## Usage
-### Python
-After initialing the [Pipenv](https://pypi.org/project/pipenv/) environment. Run:
-```
-python3 bootstrap.py create -r <REPO_NAME>
-```
+## Installation 
+`pip install git+https://github.com/aligent/bitbucket-manager`
+
+## CLI Usage
+### Pip 
+If this repository has been installed using pip. A command `bitbucket` should be available on your path.
 ### Docker
 Docker can be used to run this tool without requiring python on the host. Run:
 ```
