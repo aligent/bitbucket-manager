@@ -2,25 +2,26 @@ import requests
 
 class Bitbucket:
     auth = None
-    def __init__(self, auth, config):
+    def __init__(self, auth=None, config=None, proxies=None):
         self.auth = auth
-        self.config = config 
+        self.config = config
+        self.proxies = proxies
 
     def get_repository(self, name, workspace) ->  requests.Response:
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
-        r = requests.get(url=url, auth=self.auth)
+        r = requests.get(url=url, auth=self.auth, proxies=self.proxies)
         return r
 
     def create_repository(self, name, project, workspace):
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
-        body = { 
+        body = {
                 "scm": "git",
                 "is_private": "true",
                 "project": {
                     "key": project
                     }
                 }
-        r = requests.post(url=url, json=body , auth=self.auth)
+        r = requests.post(url=url, json=body, auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print(f"Failed to create {workspace}/{name}")
             print(r.text)
@@ -28,7 +29,7 @@ class Bitbucket:
 
     def get_repository_branch_permission(self, name, workspace):
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
-        r = requests.get(url=url , auth=self.auth)
+        r = requests.get(url=url , auth=self.auth, proxies=self.proxies)
 
     def set_repository_branch_permission(self, name, workspace, branch, permission):
         print(f"Setting brancing permissions: {permission}")
@@ -38,7 +39,7 @@ class Bitbucket:
                 "type": "branchrestriction",
                 **permission}
 
-        r = requests.post(url=url, json=body , auth=self.auth)
+        r = requests.post(url=url, json=body, auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print("Failed to configure branch permissions")
             print(r.text)
@@ -46,7 +47,7 @@ class Bitbucket:
     def set_repository_branch_model(self, name, workspace, model):
         print("Setting brancing model")
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branching-model/settings"
-        r = requests.put(url=url, json=model , auth=self.auth)
+        r = requests.put(url=url, json=model , auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print("Failed to configure branching model")
             print(r.text)
@@ -55,20 +56,27 @@ class Bitbucket:
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/src"
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        r = requests.post(url=url, headers=headers, data={"message": message, "branch": branch} , auth=self.auth)
+
+        r = requests.post(
+                url=url,
+                headers=headers,
+                data={"message": message, "branch": branch},
+                auth=self.auth,
+                proxies=self.proxies)
+
         if not r.ok:
             print("Failed to create empty commit")
             print(r.text)
 
     def create_branch(self, name, workspace, branch):
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/refs/branches"
-        body = { 
+        body = {
                 "name" : branch,
                 "target" : {
                     "hash" : "refs/heads/main",
-                    } 
+                    }
                 }
-        r = requests.post(url=url, json=body , auth=self.auth)
+        r = requests.post(url=url, json=body, auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print(f"Failed to create {branch}")
             print(r.text)
@@ -80,7 +88,7 @@ class Bitbucket:
                 "enabled": True,
                 }
 
-        r = requests.put(url=url, json=body , auth=self.auth)
+        r = requests.put(url=url, json=body, auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print("Failed to enable pipeline")
             print(r.text)
@@ -108,25 +116,38 @@ class Bitbucket:
                 "secured": is_secure
                 }
 
-        r = requests.post(url=url, json=body, auth=self.auth)
+        r = requests.post(url=url, json=body, auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print("Failed to set deployment environment variable")
             print(r.text)
 
-    def create_and_configure_repository(self, name, project = None, workspace = None):
-        project = project if project is not None else self.config['default_project']
-        workspace = workspace if workspace is not None else self.config['default_workspace']
-        print(f"Creating new repository {workspace}/{name} in project {project}")
+    def create_report(self, title, details, report_type, report_id, reporter, result, link, data, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
+        url=f"http://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}"
+        body = {
+                "title": title,
+                "details": details,
+                "report_type": report_type,
+                "reporter": reporter,
+                "link": link,
+                "result": result,
+                "data": data
+                }
+        r = requests.put(url=url, json=body, auth=self.auth, proxies=self.proxies)
+        if not r.ok:
+            print(f"Failed to create report {title}")
+            print(r.text)
 
-        if self.get_repository(name, workspace).status_code != 404:
-            print(f"Rrepository {workspace}/{name} already exists.")
-            return
-
-        self.create_repository(name, project, workspace)
-        self.enable_pipelines(name, workspace)
-        self.create_empty_commit(name, workspace, 'main', 'Initial commit')
-        for branch in self.config['default_restricted_branches']:
-            self.create_branch(name, workspace, branch)
-            for permission in self.config['default_branch_permissions']:
-                self.set_repository_branch_permission(name, workspace, branch, permission)
-        self.set_repository_branch_model(name, workspace, self.config['default_branching_model'])
+    def create_annotation(self, title, summary, severity, path, line, reporter, report_id, annotation_type, annotation_id, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
+        url=f"http://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}/annotations/{reporter}-{annotation_id}"
+        body = {
+                "title": title,
+                "annotation_type": annotation_type,
+                "summary": summary,
+                "severity": severity,
+                "path": path,
+                "line": line
+                }
+        r = requests.put(url=url, json=body, auth=self.auth, proxies=self.proxies)
+        if not r.ok:
+            print(f"Failed to create annotation {title}")
+            print(r.text)
