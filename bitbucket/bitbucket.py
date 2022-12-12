@@ -32,7 +32,7 @@ class Bitbucket:
         r = requests.get(url=url , auth=self.auth, proxies=self.proxies)
 
     def set_repository_branch_permission(self, name, workspace, branch, permission):
-        print(f"Setting brancing permissions: {permission}")
+        print(f"Setting branching permissions: {permission}")
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
         body = {
                 "pattern": branch,
@@ -45,7 +45,7 @@ class Bitbucket:
             print(r.text)
 
     def set_repository_branch_model(self, name, workspace, model):
-        print("Setting brancing model")
+        print("Setting branching model")
         url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branching-model/settings"
         r = requests.put(url=url, json=model , auth=self.auth, proxies=self.proxies)
         if not r.ok:
