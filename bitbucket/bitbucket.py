@@ -122,7 +122,7 @@ class Bitbucket:
             print(r.text)
 
     def create_report(self, title, details, report_type, report_id, reporter, result, link, data, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
-        url=f"http://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}"
+        url=f"https://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}"
         body = {
                 "title": title,
                 "details": details,
@@ -138,7 +138,7 @@ class Bitbucket:
             print(r.text)
 
     def create_annotation(self, title, summary, severity, path, line, reporter, report_id, annotation_type, annotation_id, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
-        url=f"http://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}/annotations/{reporter}-{annotation_id}"
+        url=f"https://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}/annotations/{reporter}-{annotation_id}"
         body = {
                 "title": title,
                 "annotation_type": annotation_type,
