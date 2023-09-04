@@ -2,18 +2,19 @@ import requests
 
 class Bitbucket:
     auth = None
-    def __init__(self, auth=None, config=None, proxies=None):
+    def __init__(self, auth=None, config=None, proxies=None, protocol="https"):
         self.auth = auth
         self.config = config
         self.proxies = proxies
+        self.protocol = protocol
 
     def get_repository(self, name, workspace) ->  requests.Response:
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
         r = requests.get(url=url, auth=self.auth, proxies=self.proxies)
         return r
 
     def create_repository(self, name, project, workspace):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}"
         body = {
                 "scm": "git",
                 "is_private": "true",
@@ -28,12 +29,12 @@ class Bitbucket:
 
 
     def get_repository_branch_permission(self, name, workspace):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
         r = requests.get(url=url , auth=self.auth, proxies=self.proxies)
 
     def set_repository_branch_permission(self, name, workspace, branch, permission):
-        print(f"Setting branching permissions: {permission}")
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
+        print(f"Setting brancing permissions: {permission}")
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branch-restrictions"
         body = {
                 "pattern": branch,
                 "type": "branchrestriction",
@@ -45,15 +46,15 @@ class Bitbucket:
             print(r.text)
 
     def set_repository_branch_model(self, name, workspace, model):
-        print("Setting branching model")
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branching-model/settings"
+        print("Setting brancing model")
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/branching-model/settings"
         r = requests.put(url=url, json=model , auth=self.auth, proxies=self.proxies)
         if not r.ok:
             print("Failed to configure branching model")
             print(r.text)
 
     def create_empty_commit(self, name, workspace, branch, message):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/src"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/src"
 
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
@@ -69,7 +70,7 @@ class Bitbucket:
             print(r.text)
 
     def create_branch(self, name, workspace, branch):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/refs/branches"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/refs/branches"
         body = {
                 "name" : branch,
                 "target" : {
@@ -82,7 +83,7 @@ class Bitbucket:
             print(r.text)
 
     def enable_pipelines(self, name, workspace):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/pipelines_config"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/pipelines_config"
 
         body = {
                 "enabled": True,
@@ -96,7 +97,7 @@ class Bitbucket:
 
 
     def get_uuid_for_environment(self, name, workspace, environment):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/environments/"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/environments/"
 
         r = requests.get(url=url, auth=self.auth)
         for value in r.json()['values']:
@@ -108,7 +109,7 @@ class Bitbucket:
 
 
     def set_deployment_environment_variable(self, name, workspace, uuid, key, value, is_secure):
-        url=f"https://api.bitbucket.org/2.0/repositories/{workspace}/{name}/deployments_config/environments/{uuid}/variables"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{workspace}/{name}/deployments_config/environments/{uuid}/variables"
 
         body = {
                 "key": key,
@@ -122,7 +123,7 @@ class Bitbucket:
             print(r.text)
 
     def create_report(self, title, details, report_type, report_id, reporter, result, link, data, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
-        url=f"https://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}"
         body = {
                 "title": title,
                 "details": details,
@@ -138,7 +139,7 @@ class Bitbucket:
             print(r.text)
 
     def create_annotation(self, title, summary, severity, path, line, reporter, report_id, annotation_type, annotation_id, bitbucket_workspace, bitbucket_repo_slug, bitbucket_commit):
-        url=f"https://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}/annotations/{reporter}-{annotation_id}"
+        url=f"{self.protocol}://api.bitbucket.org/2.0/repositories/{bitbucket_workspace}/{bitbucket_repo_slug}/commit/{bitbucket_commit}/reports/{reporter}-{report_id}/annotations/{reporter}-{annotation_id}"
         body = {
                 "title": title,
                 "annotation_type": annotation_type,
